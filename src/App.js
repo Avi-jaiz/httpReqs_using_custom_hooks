@@ -1,23 +1,34 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import './Components/NewTask'
+import NewTask from './Components/NewTask';
+import TaskLists from './Components/TaskList';
+import Modal from './UI/Modal';
 
-function App() {
+function App(props) {
+const [tasks,setTask] = useState([
+  {
+    id:"",
+    taskName:"",
+  }
+]);
+
+
+  const taskAddingHandler=(id,task)=>
+  {
+        setTask((prevState)=> [{id:id,taskName:task},...prevState])
+  }
+
+
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+   <NewTask  onTaskAddition={taskAddingHandler} />
+   <TaskLists taskLists={tasks}/>
+
+
     </div>
   );
 }
