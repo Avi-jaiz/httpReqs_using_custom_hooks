@@ -41,7 +41,7 @@ headers:{
 
     const data = await response.json()
 
-    console.log(data , 'data to sent')
+   setInputTask("")
   };
 
   const modalCloseHandler = () => {
@@ -53,7 +53,7 @@ headers:{
       <form className="newTaskForm">
         <div className="formInput">
           <label>New Task</label>
-          <input type="text" onChange={taskInputHandler} />
+          <input type="text" onChange={taskInputHandler} value={taskInput}/>
         </div>
 
         <div className="formAction">

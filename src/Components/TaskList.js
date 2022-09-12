@@ -1,7 +1,9 @@
 import "./taskLists.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const TaskLists = (props) => {
+  const [taskReceive, settaskReceive] = useState([]);
+
   const taskReceived = [];
 
   const taskFetched = async () => {
@@ -11,35 +13,35 @@ const TaskLists = (props) => {
 
     const data = await response.json();
 
-    
-if(data!==null)
-{
-  Object.keys(data).forEach((key) => {
-    taskReceived.push(data[key]);
-  });
+    // if(data!==null)
+    // {
+    //   Object.keys(data).forEach((key) => {
+    //     taskReceived.push(data[key]);
+    //   });
 
-}
-   
+    // }
 
-    
+    for (let key in data) {
+      taskReceived.push({
+        id: data[key].id,
+        taskName: data[key].taskName,
+      });
+    }
+    //  console.log(taskReceived[0].taskName, "task received")
+    settaskReceive(taskReceived);
   };
 
   // console.log(taskReceived, "task in array");
 
   useEffect(() => {
     taskFetched();
-  }, [taskReceived]);
+  }, [taskFetched]);
 
   // console.log(taskReceived, "taskReceived");
-console.log(taskReceived)
-  for(let i=0;i<taskReceived.length;i++)
-  {
-    console.log(taskReceived)
-  }
 
   return (
     <div className="taskLists">
-      {taskReceived.map((item) => {
+      {taskReceive.map((item) => {
         return (
           <div className="task" key={item.id}>
             <h3>{item.taskName}</h3>
