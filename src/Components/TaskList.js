@@ -1,43 +1,39 @@
 import "./taskLists.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useCallback} from "react";
+import useHttps from "../Hooks/use-http";
 
-const TaskLists = (props) => {
+const TaskLists = () => {
   const [taskReceive, settaskReceive] = useState([]);
 
   const taskReceived = [];
 
-  const taskFetched = async () => {
-    const response = await fetch(
-      "https://task-manager-f8571-default-rtdb.asia-southeast1.firebasedatabase.app/task.json"
-    );
+  const transformedTasks = useCallback((data) => {
 
-    const data = await response.json();
+    if(data!==null)
+    {
+      for (let key in data) {
+        taskReceived.push({
+          id: data[key].id,
+          taskName: data[key].taskName,
+        });
+      }
 
-    // if(data!==null)
-    // {
-    //   Object.keys(data).forEach((key) => {
-    //     taskReceived.push(data[key]);
-    //   });
-
-    // }
-
-    for (let key in data) {
-      taskReceived.push({
-        id: data[key].id,
-        taskName: data[key].taskName,
-      });
     }
-    //  console.log(taskReceived[0].taskName, "task received")
-    settaskReceive(taskReceived);
-  };
+ 
 
-  // console.log(taskReceived, "task in array");
+    settaskReceive(taskReceived);
+  });
+
+  const { sendRequests: fetchRequest } = useHttps(
+    {
+      url: "https://task-manager-f8571-default-rtdb.asia-southeast1.firebasedatabase.app/task.json",
+    },
+    transformedTasks
+  );
 
   useEffect(() => {
-    taskFetched();
-  }, [taskFetched]);
-
-  // console.log(taskReceived, "taskReceived");
+    fetchRequest();
+  }, [fetchRequest]);
 
   return (
     <div className="taskLists">

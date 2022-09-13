@@ -1,25 +1,35 @@
 import "./newTask.css";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Modal from "../UI/Modal";
+import useHttps from "../Hooks/use-http";
 
 const NewTask = (props) => {
   const [taskInput, setInputTask] = useState("");
   const [taskId, setTaskId] = useState("");
   const [modalView, setModalView] = useState(false);
 
-const taskTobeSent = {
-    id:Math.random().toString(),
-    taskName:taskInput,
-}
+  const taskSendingFunction = useCallback(() => {
+    const taskTobeSent = {
+      id: Math.random().toString(),
+      taskName: taskInput,
+    };
+    return taskTobeSent;
+  });
 
-
+  const { sendRequests: sendRequest } = useHttps(
+    {
+      url: "https://task-manager-f8571-default-rtdb.asia-southeast1.firebasedatabase.app/task.json",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: taskSendingFunction(),
+    },
+    taskSendingFunction
+  );
 
   const taskInputHandler = (e) => {
     setInputTask(e.target.value);
     setTaskId(Math.random().toString());
   };
-
-
 
   const AddTaskHanlder = async (e) => {
     e.preventDefault();
@@ -31,17 +41,8 @@ const taskTobeSent = {
 
     props.onTaskAddition(taskId, taskInput);
 
-  const response= await   fetch('https://task-manager-f8571-default-rtdb.asia-southeast1.firebasedatabase.app/task.json',{
-method:"POST",
-body:JSON.stringify(taskTobeSent),
-headers:{
-    "Content-Type":"application/json"
-}
-    })
-
-    const data = await response.json()
-
-   setInputTask("")
+    sendRequest();
+    setInputTask("");
   };
 
   const modalCloseHandler = () => {
@@ -53,7 +54,7 @@ headers:{
       <form className="newTaskForm">
         <div className="formInput">
           <label>New Task</label>
-          <input type="text" onChange={taskInputHandler} value={taskInput}/>
+          <input type="text" onChange={taskInputHandler} value={taskInput} />
         </div>
 
         <div className="formAction">
